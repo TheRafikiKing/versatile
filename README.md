@@ -3,8 +3,8 @@
 How To Run:
 1. clone the repo
 2. cd into folder versatile
-3. install dependencies from requirement.txt
-4. activate virtual (if it's fit otherwise create yours)
+3. activate virtual (if it's fit otherwise create yours)
+4. if need - install dependencies from requirement.txt
 5. config env variables: 
   HTTP_PORT, DEVICES_JSON, CRANES_JSON
   (server will not start with missing params)
