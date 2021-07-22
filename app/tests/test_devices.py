@@ -83,16 +83,6 @@ def test_get_device():
     assert response.json() == expected
 
 def test_post_device():
-    expected = {
-        "id": "device05" ,  
-        "crane_id": "crane2", 
-        "s_n": "5234937778",
-        "model": "hawkeye 56",
-        "description": "That’s a great device", 
-        "created": "01/10/2019 13:45:01",
-        "updated": "01/12/2019 23:32:01",
-        "deleted": "false"
-    }
     response = client.post(
             'devices?id=device03&crane_id=crane1&s_n=5234934890&model=hawkeye%205&description=That%E2%80%99s%20a%20great%20device',
         )
@@ -105,6 +95,7 @@ def test_post_device():
     assert response.json() == {'detail':'device already exists'}
 
 
+    #region test add
     #TBD-for now need to be updated each time to run- uncomment test with new params
     # id ="device05"
     # s_n = "5234934890"
@@ -113,6 +104,7 @@ def test_post_device():
     #     )
     # assert response.status_code == 200
     # assert response.json() == {'msg':'device was addeed succesfully'}
+    #endregion test add
 
 
     #validate cran exist
