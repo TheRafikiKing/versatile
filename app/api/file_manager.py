@@ -9,7 +9,7 @@ from fastapi import HTTPException
 
 lock = Lock()
 
-
+#TBD - create DB module and move this file there
 
 def validate_crane(crane_id):
     cranes = fileManager.read_file(settings.CRANES_JSON)

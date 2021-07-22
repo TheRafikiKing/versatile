@@ -2,8 +2,6 @@ from typing import Any, List, Dict, Optional
 
 from fastapi import Depends, APIRouter, HTTPException
 
-from pydantic import BaseModel
-
 from app import crud, schemas
 
 from time import strftime,gmtime
@@ -15,18 +13,6 @@ router = APIRouter()
 def getDb():
     return fileManager
 
-#use for serialization the device object without 'deleted' field
-class Device(BaseModel):
-    id: str
-    crane_id: str
-    s_n: str
-    model: str
-    description: str
-    created: str
-    updated: str
-
-
-
 @router.get("/health", response_model=None)
 def get_health() -> Any:
     pass
@@ -37,8 +23,8 @@ async def restore_device(
 ) -> Any:
     await crud.devices.restore_device(id)
      
-
-@router.get("/devices/deleted", response_model=List[Device])
+#with dependency injection
+@router.get("/devices/deleted", response_model=List[schemas.device.Device])
 def get_deleted_devices(
     db:Any = Depends(getDb)
 ) -> List:

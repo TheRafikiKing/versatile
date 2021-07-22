@@ -8,12 +8,15 @@ from app.schemas.device import Device
 from app.api.file_manager import fileManager
 
 
-#helper funnctions
+#region helper funnctions
+#TBD - make helper file and move helper functions
 def get_timestamp():
     return strftime("%d/%m/%Y %H:%M:%S", gmtime())
 
 def find_device(id, s_n=None):
     devices_lst = fileManager.read_file()
+    # if we prepare for post
+    # we scan to find existing options
     if(s_n):
         return list(
             filter(
@@ -27,7 +30,6 @@ def find_device(id, s_n=None):
             devices_lst
             )
         )
-
 
 def get_device(id,status_code=404):
     result = find_device(id)
@@ -49,6 +51,7 @@ def get_not_deleted_device(id):
     except:
         raise HTTPException(status_code=404,detail="device not found")
 
+# TBD - better naming
 def get_all_devices(db, deleted=False):
     devices_list = db.read_file()
     if(deleted):
@@ -57,11 +60,7 @@ def get_all_devices(db, deleted=False):
         deleted = 'false'
     return list(filter(lambda x: x.get('deleted') == deleted, devices_list))
 
-# def validate_crane(crane_id):
-#     cranes = fileManager.read_file('C:\\Users\\rafiki\\Source\\Repos\\versitals\\app\\crane.json')
-#     if crane_id not in cranes:
-#         raise HTTPException(404, detail="this crane doesnt exist")
-#     return True
+#endregion helper functions
 
 class CRUDDevice():
     async def restore_device(self, id:str):
@@ -70,7 +69,7 @@ class CRUDDevice():
             item['deleted'] = 'false'
         return await fileManager.write_to_file(item, update=True)
 
-    def get_all_devices(self,db, deleted: bool):
+    def get_all_devices(self, db, deleted: bool):
         return get_all_devices(db,deleted)
 
     async def handle_post(
@@ -125,9 +124,6 @@ class CRUDDevice():
         ):
         device = get_device(id)
         if(crane_id):
-            cranes = fileManager.read_file('C:\\Users\\rafiki\\Source\\Repos\\versitals\\app\\crane.json')
-            if crane_id not in cranes:
-                raise HTTPException(404, detail="this crane doesnt exist")
             device['crane_id'] = crane_id
         else:
             device['crane_id'] = 'no_crane'

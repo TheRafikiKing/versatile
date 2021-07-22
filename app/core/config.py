@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        'http://localhost:3000','http://localhost:8080','http://localhost:4200',SERVER_HOST
+        'http://localhost:' + HTTP_PORT ,'http://localhost:8080','http://localhost:4200',SERVER_HOST
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
