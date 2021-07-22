@@ -30,7 +30,7 @@ def get_deleted_devices(
 ) -> List:
     return crud.devices.get_all_devices(db, deleted=True)
 
-@router.get("/devices", response_model=List)
+@router.get("/devices", response_model=List[schemas.device.Device])
 def get_devices(
     db:Any = Depends(getDb)
 ) -> List:
