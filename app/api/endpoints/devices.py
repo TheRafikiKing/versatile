@@ -6,7 +6,7 @@ from app import crud, schemas
 
 from time import strftime,gmtime
 
-from ..file_manager import FileManager, fileManager
+from app.db.file_manager import FileManager, fileManager
 
 router = APIRouter()
 

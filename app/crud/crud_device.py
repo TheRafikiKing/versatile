@@ -5,7 +5,7 @@ from time import strftime,gmtime
 
 
 from app.schemas.device import Device
-from app.api.file_manager import fileManager
+from app.db.file_manager import fileManager
 
 
 #region helper funnctions

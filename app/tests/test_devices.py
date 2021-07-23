@@ -4,7 +4,7 @@ from app.main import app
 
 client = TestClient(app)
 
-from app.api.file_manager import fileManager
+from app.db.file_manager import fileManager
 def getDb():
     return fileManager
 

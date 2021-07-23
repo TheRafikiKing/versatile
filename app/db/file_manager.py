@@ -1,4 +1,6 @@
 import json
+from json.decoder import JSONDecodeError
+
 import time
 from threading import Lock
 
@@ -9,18 +11,29 @@ from fastapi import HTTPException
 
 lock = Lock()
 
-#TBD - create DB module and move this file there
-
 def validate_crane(crane_id):
     cranes = fileManager.read_file(settings.CRANES_JSON)
     if crane_id not in cranes:
-        raise HTTPException(404, detail="this crane doesnt exist")
+        raise HTTPException(400, detail="this crane doesnt exist")
     return True
 
 class FileManager(object):
     def read_file(self, path = settings.DEVICES_JSON):
-        f = open(path,"r")
-        data = json.load(f)
+        try:
+            with open(path) as f:
+                data = json.load(f)
+        except JSONDecodeError:
+            data = []
+        return data
+
+        try:
+            f = open(path,"r")
+            data = json.load(f.read())
+            print(data)
+        except:
+            raise HTTPException(504,'Error reading from db')
+        finally:
+            f.close()
         return data
 
     async def write_to_file(self, data, update = False):
@@ -34,8 +47,8 @@ class FileManager(object):
         else:
             file_data.append(data)
 
+        lock.acquire()
         try:
-            lock.acquire()
             with open(settings.DEVICES_JSON, "w") as outfile:
                 json.dump(file_data, outfile)
         finally:
