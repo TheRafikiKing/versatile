@@ -26,16 +26,6 @@ class FileManager(object):
             data = []
         return data
 
-        try:
-            f = open(path,"r")
-            data = json.load(f.read())
-            print(data)
-        except:
-            raise HTTPException(504,'Error reading from db')
-        finally:
-            f.close()
-        return data
-
     async def write_to_file(self, data, update = False):
         file_data = self.read_file()
         validate_crane(data.get('crane_id'))
