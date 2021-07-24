@@ -3,64 +3,30 @@ from fastapi.testclient import TestClient
 from httpx import AsyncClient
 
 
+
 from app.main import app
+from app.core.db import getDb
+from app.crud import crud_device
+
+
+
 
 client = TestClient(app)
 
-from app.db.file_manager import fileManager
 
-def getDb():
-    return fileManager
 
-from app.crud import crud_device
-
-fake_db = [
-    {"id": "device08",
-     "crane_id": "crane2",
-      "s_n": "5234934892",
-      "model": "hawkeye 5",
-      "description": "some description", 
-      "created": "22/07/2021 06:21:19",
-      "updated": "22/07/2021 08:42:59",
-      "deleted": "true"},
-      {"id": "device06",
-      "crane_id": "crane102",
-      "s_n": "5234934891", 
-      "model": "hawkeye 5",
-      "description": "That\u2019s a great device 5",
-      "created": "22/07/2021 06:22:29",
-      "updated": "22/07/2021 06:22:29",
-      "deleted": "false"},
-      {"id": "device12",
-      "crane_id": "crane 107",
-      "s_n": "5234934401",
-      "model": "oregon",
-      "description": "That\u2019s a great device 12",
-      "created": "22/07/2021 06:32:06",
-      "updated": "22/07/2021 06:37:17",
-      "deleted": "false"},
-      {"id": "device23",
-      "crane_id": "crane1",
-      "s_n": "5234934111",
-      "model": "hawkeye 5",
-      "description": "some description",
-      "created": "22/07/2021 08:16:31",
-      "updated": "22/07/2021 08:45:22",
-      "deleted": "false"}
-      ]
+#TBD - break into smaller tests
 
 @pytest.mark.asyncio
 async def test_read_health():
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.get("/health")
-    # response = client.get("/")
     assert response.status_code == 200
 
 @pytest.mark.asyncio
 async def test_get_devices():
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.get("/devices")
-    # response = client.get("/devices")
     assert response.status_code == 200
     actual = response.json()
     expected = await crud_device.get_all_devices(getDb(), deleted=False)

@@ -1,7 +1,10 @@
-from typing import Optional
 import datetime
+from typing import Optional
+
+
 
 from pydantic import BaseModel
+
 
 
 #use for serialization the device object without for example 'deleted' field

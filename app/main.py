@@ -1,16 +1,18 @@
 import os
 
-import uvicorn
 
+
+import uvicorn
 from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse, PlainTextResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+
 
 from app.api.api import api_router
 from app.core.config import settings
 
-from fastapi.responses import RedirectResponse
-from fastapi.responses import PlainTextResponse
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 app = FastAPI(

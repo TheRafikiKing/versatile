@@ -1,7 +1,9 @@
+from time import strftime,gmtime
 from typing import Any, List, Dict, Optional
 
+
+
 from fastapi import HTTPException
-from time import strftime,gmtime
 
 
 from app.schemas.device import Device
@@ -39,6 +41,7 @@ async def get_device(id,status_code=404):
         return result[0]
     except:
         raise HTTPException(status_code=404,detail="device not found")
+
 # TBD - better naming
 async def get_not_deleted_device(id):
     devices_lst = await fileManager.read_file()
@@ -64,6 +67,9 @@ async def get_all_devices(db, deleted=False):
 
 #endregion query functions
 
+
+#real life scenario we will inherite from a generic crud  BaseModel
+#to implement and extends crud operations
 class CRUDDevice():
     async def restore_device(self, id:str):
         device = await get_device(id)

@@ -1,17 +1,21 @@
+from time import strftime,gmtime
 from typing import Any, List, Dict, Optional
+
+
 
 from fastapi import Depends, APIRouter, HTTPException
 
+
+
 from app import crud, schemas
+from app.db.file_manager import FileManager
+from app.core.db import getDb
 
-from time import strftime,gmtime
 
-from app.db.file_manager import FileManager, fileManager
 
 router = APIRouter()
 
-def getDb():
-    return fileManager
+
 
 @router.get("/health", response_model=None)
 async def get_health() -> Any:

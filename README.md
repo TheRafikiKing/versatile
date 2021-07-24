@@ -13,8 +13,10 @@ How To Run:
   run pytest
   (pay attention to #region test add instructions)
 
+#note
+#some validations are done automaticly by the framework such as
 architecture:
 backend:
   python
-  fastapi(handle many concurrent requests) + uvicorn (which handle gracefull SIGTERM- running with the default value)
-  tests - pytest
+  fastapi(high performance, handle (async) many concurrent requests) + uvicorn (which handle gracefull SIGTERM- running with the default value)
+  tests - pytest + swagger(find at: localhsot:HTTP_PORT/docs)
