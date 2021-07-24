@@ -14,7 +14,9 @@ How To Run:
   (pay attention to #region test add instructions)
 
 #note
-#some validations are done automaticly by the framework such as
+#some validations are done automaticly
+
+
 architecture:
 backend:
   python
