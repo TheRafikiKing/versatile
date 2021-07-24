@@ -16,7 +16,7 @@ How To Run:
 #note
 #some validations are done automaticly
 
-
+    
 architecture:
 backend:
   python
