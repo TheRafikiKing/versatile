@@ -8,13 +8,15 @@ from app.schemas.device import Device
 from app.db.file_manager import fileManager
 
 
-#region helper funnctions
-#TBD - make helper file and move helper functions
+#region query funnctions
+#TBD - in real life query funnctions we will not be here! use ORM or 
+# make query model orm style file and move the functions
+# them to make them available from Device model 
 def get_timestamp():
     return strftime("%d/%m/%Y %H:%M:%S", gmtime())
 
-def find_device(id, s_n=None):
-    devices_lst = fileManager.read_file()
+async def find_device(id, s_n=None):
+    devices_lst = await fileManager.read_file()
     # if we prepare for post
     # we scan to find existing options
     if(s_n):
@@ -31,15 +33,15 @@ def find_device(id, s_n=None):
             )
         )
 
-def get_device(id,status_code=404):
-    result = find_device(id)
+async def get_device(id,status_code=404):
+    result = await find_device(id)
     try:
         return result[0]
     except:
         raise HTTPException(status_code=404,detail="device not found")
-
-def get_not_deleted_device(id):
-    devices_lst = fileManager.read_file()
+# TBD - better naming
+async def get_not_deleted_device(id):
+    devices_lst = await fileManager.read_file()
     result = list(
         filter(
             lambda x: x.get('id') == id and x.get('deleted') == 'false' ,
@@ -52,25 +54,25 @@ def get_not_deleted_device(id):
         raise HTTPException(status_code=404,detail="device not found")
 
 # TBD - better naming
-def get_all_devices(db, deleted=False):
-    devices_list = db.read_file()
+async def get_all_devices(db, deleted=False):
+    devices_list = await db.read_file()
     if(deleted):
         deleted = 'true'
     else:
         deleted = 'false'
     return list(filter(lambda x: x.get('deleted') == deleted, devices_list))
 
-#endregion helper functions
+#endregion query functions
 
 class CRUDDevice():
     async def restore_device(self, id:str):
-        item = get_device(id)
-        if(item['deleted'] == 'true'):
-            item['deleted'] = 'false'
-        return await fileManager.write_to_file(item, update=True)
+        device = await get_device(id)
+        if(device['deleted'] == 'true'):
+            device['deleted'] = 'false'
+        return await fileManager.write_to_file(device, update=True)
 
-    def get_all_devices(self, db, deleted: bool):
-        return get_all_devices(db,deleted)
+    async def get_all_devices(self, db, deleted: bool):
+        return await get_all_devices(db, deleted)
 
     async def handle_post(
         self,
@@ -80,22 +82,27 @@ class CRUDDevice():
         model: str,
         description: str
         ):
-        item = find_device(id, s_n)
-        if(len(item) == 1):
+        """
+        1. exactly 1 item return by id, s_n, model then update
+        2. 0 return then insert
+        3. more then one return data might be corrupt
+        """
+        device = await find_device(id, s_n)
+        if(len(device) == 1):
             if(
-                item[0].get('id') == id 
-                and item[0].get('s_n') == s_n 
-                and item[0].get('model') == model
+                device[0].get('id') == id 
+                and device[0].get('s_n') == s_n 
+                and device[0].get('model') == model
             ):
-                item[0]['crane_id'] = crane_id
-                item[0]['description'] = description
-                item[0]['updated'] = get_timestamp()
+                device[0]['crane_id'] = crane_id
+                device[0]['description'] = description
+                device[0]['updated'] = get_timestamp()
 
-                await fileManager.write_to_file(item[0], update=True)
+                await fileManager.write_to_file(device[0], update=True)
                 return {"msg":"device was updated succesfully"}
             else:
                 raise HTTPException(status_code=409,detail="device already exists")
-        elif(len(item) == 0):
+        elif(len(device) == 0):
             new_device = {
                 "id": id ,  
                 "crane_id": crane_id, 
@@ -109,10 +116,10 @@ class CRUDDevice():
             await fileManager.write_to_file(new_device)
             return {"msg":"device was addeed succesfully"}
         else:
-            raise HTTPException(status_code=404,detail="device already exists")
-
-    def get_not_deleted_device(self, id:str):
-        return get_not_deleted_device(id)
+            raise HTTPException(status_code=503,detail="too many device returned")
+    # TBD - better naming
+    async def get_not_deleted_device(self, id:str):
+        return await get_not_deleted_device(id)
     
     async def handle_put(
         self,
@@ -122,7 +129,7 @@ class CRUDDevice():
         model: Optional[str] = None,
         description: Optional[str] = None
         ):
-        device = get_device(id)
+        device = await get_device(id)
         if(crane_id):
             device['crane_id'] = crane_id
         else:
@@ -140,10 +147,10 @@ class CRUDDevice():
         return {'msg':'devices data updated'}
 
     async def handle_delete(self, id: str):
-        item = get_device(id)
-        if(item['deleted'] == 'false'):
-            item['deleted'] = 'true'
-            await fileManager.write_to_file(item, update=True)
+        device = await get_device(id)
+        if(device['deleted'] == 'false'):
+            device['deleted'] = 'true'
+            await fileManager.write_to_file(device, update=True)
         return {'msg':'device has been deleted succesfully'} 
 
 

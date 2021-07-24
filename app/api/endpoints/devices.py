@@ -14,7 +14,7 @@ def getDb():
     return fileManager
 
 @router.get("/health", response_model=None)
-def get_health() -> Any:
+async def get_health() -> Any:
     pass
 
 @router.post("/device/deleted/{id}/restore", response_model=Any)
@@ -25,16 +25,16 @@ async def restore_device(
      
 #with dependency injection
 @router.get("/devices/deleted", response_model=List[schemas.device.Device])
-def get_deleted_devices(
+async def get_deleted_devices(
     db:Any = Depends(getDb)
 ) -> List:
-    return crud.devices.get_all_devices(db, deleted=True)
+    return await crud.devices.get_all_devices(db, deleted=True)
 
 @router.get("/devices", response_model=List[schemas.device.Device])
-def get_devices(
+async def get_devices(
     db:Any = Depends(getDb)
 ) -> List:
-    return crud.devices.get_all_devices(db, deleted=False)
+    return await crud.devices.get_all_devices(db, deleted=False)
 
 @router.post("/devices", response_model=Any)
 async def post_devices(
@@ -47,10 +47,10 @@ async def post_devices(
     return await crud.devices.handle_post(id, crane_id, s_n, model, description)
 
 @router.get("/devices/{id}", response_model=Dict)
-def get_device(
+async def get_device(
     id: str
 ) -> Dict:
-    return crud.devices.get_not_deleted_device(id)
+    return await crud.devices.get_not_deleted_device(id)
 
 @router.put("/devices/{id}", response_model=Any)
 async def put_device(
