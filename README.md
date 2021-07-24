@@ -17,5 +17,5 @@ How To Run:
 architecture:  
 backend:     
      python  
-     fastapi(high performance, handle (async) many concurrent requests, some validations are done automaticly)   + uvicorn (which handle gracefull SIGTERM- running with the default value)  
+     fastapi(high performance, handle (async) many concurrent requests, automatic validations  and serialization)   + uvicorn (which handle gracefull SIGTERM- running with the default value)  
      tests - pytest + swagger(find at: localhsot:HTTP_PORT/docs)
